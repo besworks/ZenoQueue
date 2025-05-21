@@ -1,6 +1,6 @@
 {
   "name": "zeno-queue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Promise based queue with abort functionality",
   "main": "index.js",
   "type": "module",

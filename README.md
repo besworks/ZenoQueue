@@ -34,7 +34,9 @@ import { ZenoQueue } from 'zeno-queue';
 const queue = new ZenoQueue();
 
 // Queue an operation
-queue(() => console.log('First'));
+queue(() => {
+    console.log('First');
+});
 
 // Queue an async operation
 queue(async () => {
@@ -47,7 +49,7 @@ const task = queue(processData);
 task.abort();
 ```
 
-Note, tasks can only be aborted before they have started. If you need the ability to cancel a long running task, you should use an [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) signal in your callback.
+**Note**: tasks can only be aborted before they have started. If you need the ability to cancel a long running task, you should use an [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) signal in your callback.
 
 ```js
 const controller = new AbortController();
@@ -60,7 +62,6 @@ queue(() => {
         // your operation goes here
     }
 });
-
 
 controller.abort();
 ```
