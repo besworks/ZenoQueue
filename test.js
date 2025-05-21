@@ -122,4 +122,40 @@ describe('ZenoQueue', async () => {
         // ZenoQueue should be significantly faster
         assert.ok(zenoDuration < arrayDuration);
     });
+
+    it('supports abort and yield operations', async () => {
+        const queue = new ZenoQueue();
+        const results = [];
+        let aborted = false;
+
+        const task = queue(async (context) => {
+            for (let i = 0; i < 1000; i++) {
+                if (context.aborted) {
+                    aborted = true;
+                    break;
+                }
+                results.push(i);
+                await context.yield();
+            }
+        });
+
+        // Allow some operations to process
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Abort mid-execution
+        task.abort();
+        
+        // Allow abort to process
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Verify partial execution and abort
+        assert.ok(results.length > 0);
+        assert.ok(results.length < 1000);
+        assert.ok(aborted);
+        
+        // Verify sequence is correct up to abort
+        for (let i = 0; i < results.length - 1; i++) {
+            assert.strictEqual(results[i + 1] - results[i], 1);
+        }
+    });
 });

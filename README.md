@@ -11,7 +11,7 @@ A minimal, high-performance Promise-based queue.
 - Zero dependencies
 - Tiny (398 bytes)
 - Simple API
-- Sequential Promise execution
+- Promise chaining execution
 - AbortController cancellation
 
 ## Installation
@@ -44,37 +44,57 @@ queue(async () => {
     console.log('Second');
 });
 
-// Cancel an operation
+// Cancel an operation before it starts
 const task = queue(processData);
 task.abort();
 ```
 
-**Note**: tasks can only be aborted before they have started. If you need the ability to cancel a long running task, you should use an [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) signal in your callback.
+To cancel an operation that has already started you must access the `.aborted` boolean property of the `context`.
+
+In order to prevent blocking during long running operations you should await `.yield()` after each iteration.
 
 ```js
-const controller = new AbortController();
+async function longRunningTask(context) {
+    console.log('Starting');
 
-queue(() => {
-    for (let i=0; i<100000; i++) {
-        if (controller.signal.aborted) {
+    for (let i=0; i<10000; i++) {
+        if (context.aborted) {
+            console.log('Aborted');
             return;
         }
-        // your operation goes here
-    }
-});
 
-controller.abort();
+        console.log(i);
+        await context.yield();
+    }
+
+    console.log('Done');
+}
+
+const task = queue(longRunningTask);
+setTimeout(() => task.abort(), 1000);
 ```
 
 ## Performance
 
-Tested with 100,000 operations:
+ZenoQueue processes sequentially with O(1) complexity by chaining Promises rather than using traditional O(n) Array operations.
+
+Here are the results of a test with 100,000 tasks:
 
 ```
 ZenoQueue:   680.84ms
 Array Queue: 1127.90ms
 ```
 
-## Why ZenoQueue?
+## Limitations
 
-ZenoQueue processes operations sequentially with O(1) complexity by chaining Promises rather than using traditional O(n) Array operations.
+For simple, speedy, sequential job queuing, ZenoQueue is the clear choice. But there are some aspects that may make it be inappropriate for certain use-cases:
+
+- Tasks always execute in FIFO order
+- No pause/resume functionality
+- Task history must be tracked externally
+
+Use a traditional array-based queue if you need:
+
+- Dynamic task priorities
+- Complex queue manipulation
+- Easy task tracking
