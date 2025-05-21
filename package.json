@@ -4,8 +4,23 @@
   "description": "Promise based queue with abort functionality",
   "main": "index.js",
   "type": "module",
-  "keywords": ["queue", "promise", "sequential", "abort"],
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "queue",
+    "promise",
+    "sequential",
+    "abort",
+    "zeno"
+  ],
   "scripts": {
     "test": "node --test test.js"
+  },
+  "author": "Russell Beswick",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/besworks/ZenoQueue.git"
   }
 }
