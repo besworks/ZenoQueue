@@ -9,7 +9,7 @@ A minimal, high-performance Promise-based queue.
 
 - ~40% faster than array-based queues
 - Zero dependencies
-- Tiny (398 bytes)
+- Tiny (< 1kb)
 - Simple API
 - Promise chaining execution
 - AbortController cancellation
@@ -87,7 +87,7 @@ Array Queue: 1127.90ms
 
 ## Limitations
 
-For simple, speedy, sequential job queuing, ZenoQueue is the clear choice. But there are some aspects that may make it be inappropriate for certain use-cases:
+For simple, speedy, sequential job queuing, ZenoQueue is the clear choice. But there are some aspects that may make it inappropriate for certain use-cases:
 
 - Tasks always execute in FIFO order
 - No pause/resume functionality
